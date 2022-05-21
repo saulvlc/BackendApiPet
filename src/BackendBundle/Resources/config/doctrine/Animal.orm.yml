@@ -1,0 +1,86 @@
+BackendBundle\Entity\Animal:
+    type: entity
+    table: animal
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        nombre:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        tipo:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        raza:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        edad:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+        provincia:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        localidad:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        tamanio:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        descripcion:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+                default: 'NULL'
+        userId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: user_id
+    manyToMany:
+        user:
+            targetEntity: User
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: animal
+            joinTable:
+                name: animal_user
+                joinColumns:
+                    -
+                        name: animal_id
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    -
+                        name: user_id
+                        referencedColumnName: id
+            orderBy: null
+    lifecycleCallbacks: {  }

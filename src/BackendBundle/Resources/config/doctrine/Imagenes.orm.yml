@@ -1,0 +1,35 @@
+BackendBundle\Entity\Imagenes:
+    type: entity
+    table: imagenes
+    indexes:
+        IDX_376A60018E962C16:
+            columns:
+                - animal_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        imagen:
+            type: blob
+            nullable: false
+            length: null
+            options:
+                fixed: false
+    manyToOne:
+        animal:
+            targetEntity: Animal
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                animal_id:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

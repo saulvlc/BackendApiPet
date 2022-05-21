@@ -1,0 +1,80 @@
+BackendBundle\Entity\User:
+    type: entity
+    table: user
+    uniqueConstraints:
+        UNIQ_8D93D649E7927C74:
+            columns:
+                - email
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        email:
+            type: string
+            nullable: false
+            length: 180
+            options:
+                fixed: false
+        roles:
+            type: string
+            nullable: false
+            length: 50
+            options:
+                fixed: false
+        password:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        nombre:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        apellidos:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        ciudad:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        telefono:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+        imagen:
+            type: blob
+            nullable: true
+            length: null
+            options:
+                fixed: false
+                default: 'NULL'
+        edad:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+    manyToMany:
+        animal:
+            targetEntity: Animal
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: user
+            inversedBy: null
+            joinTable: null
+            orderBy: null
+    lifecycleCallbacks: {  }
