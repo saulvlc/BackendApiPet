@@ -1,0 +1,49 @@
+user_new:
+    path: /new
+    defaults: { _controller: "AppBundle:User:new" }
+    methods: POST
+
+edit_new:
+    path: /edit
+    defaults: { _controller: "AppBundle:User:edit" }
+    methods: POST
+
+user_get:
+    path: /get/{email}
+    defaults: { _controller: "AppBundle:User:get", email:null }
+    methods: POST
+
+user_newIntereses:
+    path: /newIntereses
+    defaults: { _controller: "AppBundle:User:newIntereses" }
+    methods: POST
+
+user_getIntereses:
+    path: /getIntereses/{email}
+    defaults: { _controller: "AppBundle:User:getIntereses", email:null }
+    methods: POST
+
+user_favoritos:
+    path: /favoritos/{email}/{id}
+    defaults: { _controller: "AppBundle:User:favoritos", email:null, id:null }
+    methods: POST
+
+user_eliminarAnimal:
+    path: /eliminarAnimal/{email}/{id}
+    defaults: { _controller: "AppBundle:User:eliminarAnimal", email:null, id:null }
+    methods: POST
+
+user_eliminarIntereses:
+    path: /eliminarIntereses/{email}
+    defaults: { _controller: "AppBundle:User:eliminarIntereses", email:null }
+    methods: POST
+
+user_eliminarFavorito:
+    path: /eliminarFavorito/{email}/{id}
+    defaults: { _controller: "AppBundle:User:eliminarFavorito", email:null, id:null }
+    methods: POST
+
+user_getFavoritos:
+    path: /getFavoritos/{email}
+    defaults: { _controller: "AppBundle:User:getFavoritos", email:null }
+    methods: POST

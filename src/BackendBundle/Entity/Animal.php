@@ -8,6 +8,7 @@ namespace BackendBundle\Entity;
 class Animal
 {
     /**
+     * @Groups("animal")
      * @var integer
      */
     private $id;
@@ -59,6 +60,7 @@ class Animal
 
     /**
      * @var \Doctrine\Common\Collections\Collection
+     * @ORM\ManyToMany(targetEntity="BackendBundle\Entity\User", inversedBy="animal")
      */
     private $user;
 

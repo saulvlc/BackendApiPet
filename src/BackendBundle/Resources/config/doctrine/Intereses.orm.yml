@@ -22,38 +22,12 @@ BackendBundle\Entity\Intereses:
             options:
                 fixed: false
                 default: 'NULL'
-        raza:
-            type: string
-            nullable: true
-            length: 255
-            options:
-                fixed: false
-                default: 'NULL'
-        edad:
-            type: integer
-            nullable: true
-            options:
-                unsigned: false
-                default: 'NULL'
         provincia:
             type: string
             nullable: true
             length: 255
             options:
                 fixed: false
-                default: 'NULL'
-        localidad:
-            type: string
-            nullable: true
-            length: 255
-            options:
-                fixed: false
-                default: 'NULL'
-        tamanio:
-            type: integer
-            nullable: true
-            options:
-                unsigned: false
                 default: 'NULL'
     manyToOne:
         user:
