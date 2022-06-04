@@ -35,7 +35,6 @@ class DefaultController extends Controller
 
         if($json != null ){
             //Hacemos el login
-
             //Convertimos un json a un objeto
             $params = json_decode($json);
 
@@ -49,15 +48,19 @@ class DefaultController extends Controller
             $emailContraint->message = "El email no es válido";
             $validate_email = $this->get("validator")->validate($email, $emailContraint);
 
+            //Ciframos la contraseña
+            $pwd = hash('sha256', $password);
+
+
             //Hacemos las comprobaciones
             if(\count($validate_email) == 0 && $email != null && $password != null){
                 
                 $jwt_Auth = $this->get(jwtAuth::class);
 
                 if($getHahs == null || $getHahs == 'false'){
-                    $singUp = $jwt_Auth->singUp($email, $password);
+                    $singUp = $jwt_Auth->singUp($email, $pwd);
                 }else{
-                    $singUp = $jwt_Auth->singUp($email, $password, true);
+                    $singUp = $jwt_Auth->singUp($email, $pwd, true);
                 }
 
                 return $this->json($singUp);
@@ -78,18 +81,31 @@ class DefaultController extends Controller
         return $helpers->json($data);
     }
 
-    public function pruebaAction()
+    public function pruebaAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        //$user = $em->getRepository('BackendBundle:User')->findOneBy(array('nombre' => 'admin'));
-        $users = $em->getRepository('BackendBundle:User')->findAll();
-
+        $token = $request->get('authorization', null);
         $helpers = $this->get(Helpers::class);
-        return $helpers->json(array(
-            'status' => 'success',
-            'code' => 200,
-            'data' => $users
-        ));
+        $jwt_Auth = $this->get(jwtAuth::class);
+        
+        if($token && $jwt_Auth->checkToken($token)){
+
+            $em = $this->getDoctrine()->getManager();
+            $users = $em->getRepository('BackendBundle:User')->findAll();
+            
+            return $helpers->json(array(
+                'status' => 'success',
+                'code' => 200,
+                'data' => $users
+            ));
+        }else{
+            return $helpers->json(array(
+                'status' => 'error',
+                'code' => 400,
+                'msg' => 'autorización no válida'
+            ));
+        }
+
+        
 
         // return new JsonResponse(array(
         //     'status' => 'success',

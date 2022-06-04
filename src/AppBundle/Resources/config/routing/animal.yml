@@ -1,0 +1,44 @@
+animal_new:
+    path: /new
+    defaults: { _controller: "AppBundle:Animal:new" }
+    methods: POST
+
+animal_edit:
+    path: /edit/{id}
+    defaults: { _controller: "AppBundle:Animal:new", id:null }
+    methods: POST
+
+animal_listaUsuario:
+    path: /listaUsuario
+    defaults: { _controller: "AppBundle:Animal:mostrarAnimalesUsuario" }
+    methods: POST
+
+animal_mostrarAnimal:
+    path: /animal/{id}
+    defaults: { _controller: "AppBundle:Animal:mostrarAnimal", id:null }
+    methods: POST
+
+animal_bucadorAnimal:
+    path: /buscar/{search}
+    defaults: { _controller: "AppBundle:Animal:buscadorAnimales", search:null}
+    methods: POST
+
+animal_eliminarAnimal:
+    path: /eliminarAnimal/{id}
+    defaults: { _controller: "AppBundle:Animal:eliminarAnimal", id:null }
+    methods: POST
+
+animal_getAnimal:
+    path: /getAnimal/{id}
+    defaults: { _controller: "AppBundle:Animal:getAnimal", id:null }
+    methods: POST
+
+animal_todosAnimales:
+    path: /todosAnimales
+    defaults: { _controller: "AppBundle:Animal:todosAnimales" }
+    methods: POST
+
+animal_searchAnimal:
+    path: /search/{tipo}/{provincia}/{nombre}/{page}
+    defaults: { _controller: "AppBundle:Animal:searchAnimales", tipo:null, provincia:null, nombre:null }
+    methods: POST

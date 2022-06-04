@@ -8,6 +8,7 @@ namespace BackendBundle\Entity;
 class User
 {
     /**
+     * @Groups("user")
      * @var integer
      */
     private $id;
@@ -59,6 +60,7 @@ class User
 
     /**
      * @var \Doctrine\Common\Collections\Collection
+     * @ORM\ManyToMany(targetEntity="BackendBundle\Entity\Animal", mappedBy="user")
      */
     private $animal;
 

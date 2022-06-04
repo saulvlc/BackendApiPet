@@ -20,27 +20,7 @@ class Intereses
     /**
      * @var string
      */
-    private $raza = 'NULL';
-
-    /**
-     * @var integer
-     */
-    private $edad = 'NULL';
-
-    /**
-     * @var string
-     */
     private $provincia = 'NULL';
-
-    /**
-     * @var string
-     */
-    private $localidad = 'NULL';
-
-    /**
-     * @var integer
-     */
-    private $tamanio = 'NULL';
 
     /**
      * @var \BackendBundle\Entity\User
@@ -83,54 +63,6 @@ class Intereses
     }
 
     /**
-     * Set raza
-     *
-     * @param string $raza
-     *
-     * @return Intereses
-     */
-    public function setRaza($raza)
-    {
-        $this->raza = $raza;
-
-        return $this;
-    }
-
-    /**
-     * Get raza
-     *
-     * @return string
-     */
-    public function getRaza()
-    {
-        return $this->raza;
-    }
-
-    /**
-     * Set edad
-     *
-     * @param integer $edad
-     *
-     * @return Intereses
-     */
-    public function setEdad($edad)
-    {
-        $this->edad = $edad;
-
-        return $this;
-    }
-
-    /**
-     * Get edad
-     *
-     * @return integer
-     */
-    public function getEdad()
-    {
-        return $this->edad;
-    }
-
-    /**
      * Set provincia
      *
      * @param string $provincia
@@ -152,54 +84,6 @@ class Intereses
     public function getProvincia()
     {
         return $this->provincia;
-    }
-
-    /**
-     * Set localidad
-     *
-     * @param string $localidad
-     *
-     * @return Intereses
-     */
-    public function setLocalidad($localidad)
-    {
-        $this->localidad = $localidad;
-
-        return $this;
-    }
-
-    /**
-     * Get localidad
-     *
-     * @return string
-     */
-    public function getLocalidad()
-    {
-        return $this->localidad;
-    }
-
-    /**
-     * Set tamanio
-     *
-     * @param integer $tamanio
-     *
-     * @return Intereses
-     */
-    public function setTamanio($tamanio)
-    {
-        $this->tamanio = $tamanio;
-
-        return $this;
-    }
-
-    /**
-     * Get tamanio
-     *
-     * @return integer
-     */
-    public function getTamanio()
-    {
-        return $this->tamanio;
     }
 
     /**
