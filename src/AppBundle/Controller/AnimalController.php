@@ -149,15 +149,30 @@ class AnimalController extends Controller{
             $identity = $jwt_auth->checkToken($token, true);
 
             $em = $this->getDoctrine()->getManager();
-            $animal = $em->getRepository('BackendBundle:Animal')->findBy(array(
+            $animals = $em->getRepository('BackendBundle:Animal')->findBy(array(
                 'userId' => $identity->sub
             ));
+
+            foreach ($animals as $animal) {
+                        $animales[] = array(
+                            'id' => $animal->getId(),
+                            'nombre' => $animal->getNombre(),
+                            'tipo' => $animal->getTipo(),
+                            'raza' => $animal->getRaza(),
+                            'edad' => $animal->getEdad(),
+                            'tamanio' => $animal->getTamanio(),
+                            'provincia' => $animal->getProvincia(),
+                            'localidad' => $animal->getLocalidad(),
+                            'userId' => $animal->getUserId(),
+                            'descripcion' => $animal->getDescripcion(),
+                        );
+                    }
 
             //Recogemos los datos de la pagina que nos vienen por GET
             $page = $request->query->getInt('page', 1);
             $paginator = $this->get('knp_paginator');
             $items_per_page = 9;
-            $pagination = $paginator->paginate($animal, $page, $items_per_page);
+            $pagination = $paginator->paginate($animales, $page, $items_per_page);
             $total_items_count = $pagination->getTotalItemCount();
 
             $data = array(
@@ -203,11 +218,27 @@ class AnimalController extends Controller{
             $identity = $jwt_auth->checkToken($token, true);
 
             $em = $this->getDoctrine()->getManager();
-            $animal = $em->getRepository('BackendBundle:Animal')->findOneBy(array(
+            $animalBuscar = $em->getRepository('BackendBundle:Animal')->findOneBy(array(
                 'id' => $id
             ));
 
-            if(is_object($animal) && $animal && $animal->getUserId() == $identity->sub){
+            
+
+            if(is_object($animalBuscar) && $animalBuscar && $animalBuscar->getUserId() == $identity->sub){
+                
+                $animal = array(
+                    'id' => $animalBuscar->getId(),
+                    'nombre' => $animalBuscar->getNombre(),
+                    'tipo' => $animalBuscar->getTipo(),
+                    'raza' => $animalBuscar->getRaza(),
+                    'edad' => $animalBuscar->getEdad(),
+                    'tamanio' => $animalBuscar->getTamanio(),
+                    'provincia' => $animalBuscar->getProvincia(),
+                    'localidad' => $animalBuscar->getLocalidad(),
+                    'userId' => $animalBuscar->getUserId(),
+                    'descripcion' => $animalBuscar->getDescripcion(),
+                );
+                
                 $data = array(
                     'status' => 'success',
                     'code' => 200,
@@ -229,13 +260,22 @@ class AnimalController extends Controller{
             );
         }
 
+        $encoder = new JsonEncoder();
+                $normalizer = new ObjectNormalizer();
+                $normalizer->setCircularReferenceHandler(function ($object, string $format = null, array $context = array()) {
+                    return $object->getId();
+                });
+                $serializer = new Serializer(array($normalizer), array($encoder));
+
+                $response = new Response($serializer->serialize($data, 'json'));
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
+
         return $helpers->json($data);
     }
 
     public function buscadorAnimalesAction(Request $request){
         $helpers = $this->get(Helpers::class);
-        $encoder = new JsonEncoder();
-        $normalizer = new ObjectNormalizer();
         $jwt_auth = $this->get(jwtAuth::class);
         $token = $request->get('authorization', null);
         $authCheck = $jwt_auth->checkToken($token);
@@ -245,13 +285,23 @@ class AnimalController extends Controller{
             //conseguir los datos del usurario via token
             $identity = $jwt_auth->checkToken($token, true);
 
-                $normalizer->setCircularReferenceHandler(function ($object, string $format = null, array $context = array()) {
-                return $object->getId();
-                });
-                $serializer = new Serializer(array($normalizer), array($encoder));
-
                 $repository = $this->getDoctrine()->getRepository(Animal::class);
-                $animales = $repository->findAll();
+                $animals = $repository->findAll();
+
+                foreach ($animals as $animal) {
+                        $animales[] = array(
+                            'id' => $animal->getId(),
+                            'nombre' => $animal->getNombre(),
+                            'tipo' => $animal->getTipo(),
+                            'raza' => $animal->getRaza(),
+                            'edad' => $animal->getEdad(),
+                            'tamanio' => $animal->getTamanio(),
+                            'provincia' => $animal->getProvincia(),
+                            'localidad' => $animal->getLocalidad(),
+                            'userId' => $animal->getUserId(),
+                            'descripcion' => $animal->getDescripcion(),
+                        );
+                    }
                 
                 //Recogemos los datos de la pagina que nos vienen por GET
                 $page = $request->query->getInt('page', 1);
@@ -281,9 +331,7 @@ class AnimalController extends Controller{
                 $response->headers->set('Content-Type', 'application/json');
                 return $response;
 
-                // $data = new Response($serializer->serialize($intervention, 'json'));
-                // $data->headers->set('Content-Type', 'application/json');
-                // return $data;
+                //return $helpers->json($data);
         }else{
             $data = array(
                 'status' => 'error',
@@ -349,11 +397,27 @@ class AnimalController extends Controller{
             $identity = $jwt_auth->checkToken($token, true);
 
             $em = $this->getDoctrine()->getManager();
-            $animal = $em->getRepository('BackendBundle:Animal')->findOneBy(array(
+            $animalBuscar = $em->getRepository('BackendBundle:Animal')->findOneBy(array(
                 'id' => $id
             ));
 
-            if(is_object($animal) && $animal){
+            
+
+            if(is_object($animalBuscar) && $animalBuscar){
+
+                $animal = array(
+                    'id' => $animalBuscar->getId(),
+                    'nombre' => $animalBuscar->getNombre(),
+                    'tipo' => $animalBuscar->getTipo(),
+                    'raza' => $animalBuscar->getRaza(),
+                    'edad' => $animalBuscar->getEdad(),
+                    'tamanio' => $animalBuscar->getTamanio(),
+                    'provincia' => $animalBuscar->getProvincia(),
+                    'localidad' => $animalBuscar->getLocalidad(),
+                    'userId' => $animalBuscar->getUserId(),
+                    'descripcion' => $animalBuscar->getDescripcion(),
+                );
+
                 $data = array(
                     'status' => 'success',
                     'code' => 200,
@@ -374,6 +438,17 @@ class AnimalController extends Controller{
                 'msg' => 'autorización no válida'
             );
         }
+
+        $encoder = new JsonEncoder();
+                $normalizer = new ObjectNormalizer();
+                $normalizer->setCircularReferenceHandler(function ($object, string $format = null, array $context = array()) {
+                    return $object->getId();
+                });
+                $serializer = new Serializer(array($normalizer), array($encoder));
+
+                $response = new Response($serializer->serialize($data, 'json'));
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
 
         return $helpers->json($data);
     }
@@ -467,70 +542,93 @@ class AnimalController extends Controller{
                 $repository = $this->getDoctrine()->getRepository(Animal::class);
 
                 if($tipo != "vacio" && $nombre != "vacio" && $provincia != "vacio"){
-                    $animales = $repository->findBy(array(
+                    $animals = $repository->findBy(array(
                         'tipo' => $tipo,
                         'nombre' => $nombre,
                         'provincia' => $provincia
                     ));
                 }elseif($tipo != "vacio" && $nombre != "vacio"){
-                    $animales = $repository->findBy(array(
+                    $animals = $repository->findBy(array(
                         'tipo' => $tipo,
                         'nombre' => $nombre
                     ));
                 }elseif($tipo != "vacio" && $provincia != "vacio"){
-                    $animales = $repository->findBy(array(
+                    $animals = $repository->findBy(array(
                         'tipo' => $tipo,
                         'provincia' => $provincia
                     ));
                 }elseif($nombre != "vacio" && $provincia != "vacio"){
-                    $animales = $repository->findBy(array(
+                    $animals = $repository->findBy(array(
                         'nombre' => $nombre,
                         'provincia' => $provincia
                     ));
                 }elseif($tipo != "vacio"){
-                    $animales = $repository->findBy(array(
+                    $animals = $repository->findBy(array(
                         'tipo' => $tipo
                     ));
                 }elseif($nombre != "vacio"){
-                    $animales = $repository->findBy(array(
+                    $animals = $repository->findBy(array(
                         'nombre' => $nombre
                     ));
                 }elseif($provincia != "vacio"){
-                    $animales = $repository->findBy(array(
+                    $animals = $repository->findBy(array(
                         'provincia' => $provincia
                     ));
                 }else{
-                    $animales = $repository->findAll();
+                    $animals = $repository->findAll();
                 }
 
-                //Recogemos los datos de la pagina que nos vienen por GET
-                $page = $request->query->getInt('page', 1);
-                $paginator = $this->get('knp_paginator');
-                $items_per_page = 9;
-                $pagination = $paginator->paginate($animales, $page, $items_per_page);
-                $total_items_count = $pagination->getTotalItemCount();
+                if(count($animals) > 0){
+                    foreach ($animals as $animal) {
+                        $animales[] = array(
+                            'id' => $animal->getId(),
+                            'nombre' => $animal->getNombre(),
+                            'tipo' => $animal->getTipo(),
+                            'raza' => $animal->getRaza(),
+                            'edad' => $animal->getEdad(),
+                            'tamanio' => $animal->getTamanio(),
+                            'provincia' => $animal->getProvincia(),
+                            'localidad' => $animal->getLocalidad(),
+                            'userId' => $animal->getUserId(),
+                            'descripcion' => $animal->getDescripcion(),
+                        );
+                    }
 
-                $data = array(
-                    'status' => 'success',
-                    'code' => 200,
-                    'total_items_count' => $total_items_count,
-                    'page_actual' => $page,
-                    'items_per_page' => $items_per_page,
-                    'total_pages' => ceil($total_items_count / $items_per_page),
-                    'data' => $pagination
-                );
+                    //Recogemos los datos de la pagina que nos vienen por GET
+                    $page = $request->query->getInt('page', 1);
+                    $paginator = $this->get('knp_paginator');
+                    $items_per_page = 9;
+                    $pagination = $paginator->paginate($animales, $page, $items_per_page);
+                    $total_items_count = $pagination->getTotalItemCount();
 
-                $encoder = new JsonEncoder();
-                $normalizer = new ObjectNormalizer();
-                $normalizer->setCircularReferenceHandler(function ($object, string $format = null, array $context = array()) {
-                    return $object->getId();
-                });
-                $serializer = new Serializer(array($normalizer), array($encoder));
+                    $data = array(
+                        'status' => 'success',
+                        'code' => 200,
+                        'total_items_count' => $total_items_count,
+                        'page_actual' => $page,
+                        'items_per_page' => $items_per_page,
+                        'total_pages' => ceil($total_items_count / $items_per_page),
+                        'data' => $pagination
+                    );
 
-                $response = new Response($serializer->serialize($data, 'json'));
-                $response->headers->set('Content-Type', 'application/json');
-                return $response;
+                    $encoder = new JsonEncoder();
+                    $normalizer = new ObjectNormalizer();
+                    $normalizer->setCircularReferenceHandler(function ($object, string $format = null, array $context = array()) {
+                        return $object->getId();
+                    });
+                    $serializer = new Serializer(array($normalizer), array($encoder));
 
+                    $response = new Response($serializer->serialize($data, 'json'));
+                    $response->headers->set('Content-Type', 'application/json');
+                    return $response;
+                }else{
+                    $data = array(
+                        'status' => 'error',
+                        'code' => 400,
+                        'msg' => 'No hay animales'
+                    );
+                    return $helpers->json($data);
+                }
         }else{
             $data = array(
                 'status' => 'error',

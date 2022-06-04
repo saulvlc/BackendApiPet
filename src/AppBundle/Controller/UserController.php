@@ -556,15 +556,25 @@ class UserController extends Controller{
             if($user){
                 //Buscamos los intereses de ese usuario
                 $intereses = $em->getRepository('BackendBundle:Intereses')->findOneBy(array('user' => $user));
-                //Eliminamos los intereses de la base de datos
-                $em->remove($intereses);
-                $em->flush();
+                //si no existe intereses
+                if($intereses){
+                    //Eliminamos los intereses de la base de datos
+                    $em->remove($intereses);
+                    $em->flush();
 
-                $data = array(
-                    'status' => 'success',
-                    'code' => 200,
-                    'msg' => 'Intereses eliminados correctamente'
-                );
+                    $data = array(
+                        'status' => 'success',
+                        'code' => 200,
+                        'msg' => 'Intereses eliminados correctamente'
+                    );
+                }else{
+                    $data = array(
+                        'status' => 'error',
+                        'code' => 400,
+                        'msg' => 'No hay intereses'
+                    );
+                }
+                
             }else{
                 $data = array(
                     'status' => 'error',
