@@ -237,31 +237,32 @@ class UserController extends Controller{
             //conseguir el usuario a actualizar
 
             if($email == $identity->email){
-                $user = $em->getRepository('BackendBundle:User')->findOneBy(array('email' => $email));
-
+                $u = $em->getRepository('BackendBundle:User')->findOneBy(array('email' => $email));
+                $user = array(
+                    'id' => $u->getId(),
+                    'nombre' => $u->getNombre(),
+                    'apellidos' => $u->getApellidos(),
+                    'email' => $u->getEmail(),
+                    'ciudad' => $u->getCiudad(),
+                    'telefono' => $u->getTelefono(),
+                    'edad' => $u->getEdad(),
+                    'imagen' => $u->getImagen(),
+                );
+                
                 //Extraemos la imagen del usuario y la convertimos
-                $imagen_user = $user->getImagen();
+                //$imagen_user = $user->getImagen();
                 // $imagen_user = str_replace('data:image/png;base64,', '', $imagen_user);
                 // $imagen_user = str_replace(' ', '+', $imagen_user);
                 // $imagen_user = base64_decode($imagen_user);
                 // $imagen_user = 'data:image/png;base64,' . base64_encode($imagen_user);
-                $imagen_user_string = base64_encode(stream_get_contents($imagen_user));
-                $imagen_user = 'data:image/png;base64,' . $imagen_user_string;
+                // $imagen_user_string = base64_encode(stream_get_contents($imagen_user));
+                // $imagen_user = 'data:image/png;base64,' . $imagen_user_string;
 
                 if($user){
                     $data = array(
                         'status' => 'success',
                         'code' => 200,
-                            'data' => array(
-                                'id' => $user->getId(),
-                                'nombre' => $user->getNombre(),
-                                'apellidos' => $user->getApellidos(),
-                                'email' => $user->getEmail(),
-                                'ciudad' => $user->getCiudad(),
-                                'telefono' => $user->getTelefono(),
-                                'edad' => $user->getEdad(),
-                                'imagen' => $imagen_user
-                            )
+                            'data' => $user
                     );
 
                     $encoder = new JsonEncoder();
@@ -457,6 +458,30 @@ class UserController extends Controller{
             $animal = $em->getRepository('BackendBundle:Animal')->findOneBy(array('id' => $id));
 
             if($user && $animal){
+                //Comprobamos si el animal y el usuario ya estan en favoritos
+                $favoritosUser = $user->getAnimal();
+                $favoritosAnimal = $animal->getUser();
+
+                //if(!$favoritosUser->contains($animal) && !$favoritosAnimal->contains($user)){
+                    $user->addAnimal($animal);
+                    $animal->addUser($user);
+
+                    $em->persist($user);
+                    $em->persist($animal);
+                    $em->flush();
+
+                    $data = array(
+                        'status' => 'success',
+                        'code' => 200,
+                        'msg' => 'Animal agregado a favoritos'
+                    );
+                // }else{
+                //     $data = array(
+                //         'status' => 'error',
+                //         'code' => 400,
+                //         'msg' => 'El animal ya esta en favoritos'
+                //     );
+                // }
                 $user->addAnimal($animal);
                 $animal->addUser($user);
 
@@ -502,6 +527,15 @@ class UserController extends Controller{
             if($user && $animal){
                 //Si el usuario tiene el animal
                 if($user->getId() == $animal->getUserId()){
+                    //Eliminamos las imagenes que tenga el animal
+                    $imagenes = $em->getRepository('BackendBundle:Imagenes')->findBy(array(
+                        'animal' => $animal->getId()
+                    ));
+
+                foreach ($imagenes as $imagen) {
+                    $em->remove($imagen);
+                    $em->flush();
+                }
                     //Eliminamos el animal de la base de datos
                     $em->remove($animal);
                     $em->flush();
@@ -556,15 +590,25 @@ class UserController extends Controller{
             if($user){
                 //Buscamos los intereses de ese usuario
                 $intereses = $em->getRepository('BackendBundle:Intereses')->findOneBy(array('user' => $user));
-                //Eliminamos los intereses de la base de datos
-                $em->remove($intereses);
-                $em->flush();
+                //si no existe intereses
+                if($intereses){
+                    //Eliminamos los intereses de la base de datos
+                    $em->remove($intereses);
+                    $em->flush();
 
-                $data = array(
-                    'status' => 'success',
-                    'code' => 200,
-                    'msg' => 'Intereses eliminados correctamente'
-                );
+                    $data = array(
+                        'status' => 'success',
+                        'code' => 200,
+                        'msg' => 'Intereses eliminados correctamente'
+                    );
+                }else{
+                    $data = array(
+                        'status' => 'error',
+                        'code' => 400,
+                        'msg' => 'No hay intereses'
+                    );
+                }
+                
             }else{
                 $data = array(
                     'status' => 'error',
@@ -663,7 +707,12 @@ class UserController extends Controller{
                 $animales = $user->getAnimal();
                 //Si tiene animales en favoritos
                 if(count($animales) > 0){
+
                     foreach ($animales as $animal) {
+                        //Obtenemos las imagenes del animal
+                        $imagenes = $em->getRepository('BackendBundle:Imagenes')->findBy(array(
+                            'animal' => $animal->getId()
+                        ));
                         $datos[] = array(
                             'id' => $animal->getId(),
                             'nombre' => $animal->getNombre(),
@@ -675,12 +724,24 @@ class UserController extends Controller{
                             'localidad' => $animal->getLocalidad(),
                             'userId' => $animal->getUserId(),
                             'descripcion' => $animal->getDescripcion(),
+                            'imagenes' => $imagenes
                         );
+
+                        //Recogemos los datos de la pagina que nos vienen por GET
+                        $page = $request->query->getInt('page', 1);
+                        $paginator = $this->get('knp_paginator');
+                        $items_per_page = 9;
+                        $pagination = $paginator->paginate($datos, $page, $items_per_page);
+                        $total_items_count = $pagination->getTotalItemCount();
                     }
                     $data = array(
                         'status' => 'success',
                         'code' => 200,
-                        'data' => $datos
+                        'total_items_count' => $total_items_count,
+                        'page_actual' => $page,
+                        'items_per_page' => $items_per_page,
+                        'total_pages' => ceil($total_items_count / $items_per_page),
+                        'data' => $pagination
                     );
                 }else{
                     $data = array(
@@ -714,5 +775,76 @@ class UserController extends Controller{
         $response = new Response($serializer->serialize($data, 'json'));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
+    }
+
+    //Funcion para adoptar un animal y que se envie un correo electronico al dueño del animal
+    public function adoptarAction(Request $request, $animalId,$email){
+        $helpers = $this->get(Helpers::class);
+        $jwt_auth = $this->get(jwtAuth::class);
+        $token = $request->get('authorization', null);
+        $authCheck = $jwt_auth->checkToken($token);
+
+        //array de error por defecto
+        $data = array(
+            'status' => 'error',
+            'code' => 400,
+            'msg' => 'error al adoptar el animal'
+        );
+        
+        if($authCheck){
+            //entity manager
+            $em = $this->getDoctrine()->getManager();
+            //conseguir los datos del usurario via token
+            $identity = $jwt_auth->checkToken($token, true);
+            //Conseguimos los datos del usuario que quiere adoptar el animal
+            $user = $em->getRepository('BackendBundle:User')->findOneBy(array('email' => $email));
+            //Conseguimos el animal que quiere adoptar el usuario
+            $animal = $em->getRepository('BackendBundle:Animal')->findOneBy(array('id' => $animalId));
+            
+            //Si existe el usuario y el animal
+            if($animal && $user){
+                //Conseguimos el actual dueño del animal
+                $actualDueño = $em->getRepository('BackendBundle:User')->findOneBy(array('id' => $animal->getUserId()));
+
+                //Si el usuario que quiere adoptar el animal no es el dueño del animal
+                if($user->getId() != $actualDueño->getId()){
+
+                    //Enviamos el correo electronico al dueño del animal
+                    $asunto = "Quiero adoptar tu mascota";
+                    $mensaje = "El usuario ".$user->getNombre()." ".$user->getApellidos()." quiere adoptar tu animal ".$animal->getNombre().". Puedes contactar con el usuario para más información a través de su correo electrónico: ".$user->getEmail() . " o a través de su numero de teléfono: ".$user->getTelefono();
+                    $destinatario = $actualDueño->getEmail();
+                    
+
+                    $data = array(
+                        'status' => 'success',
+                        'code' => 200,
+                        'msg' => 'Mensaje enviado correctamente',
+                        'asunto' => $asunto,
+                        'mensaje' => $mensaje,
+                        'destinatario' => $destinatario
+                    );
+                }else{
+                    $data = array(
+                        'status' => 'error',
+                        'code' => 400,
+                        'msg' => 'No puedes adoptar tu propio animal'
+                    );
+                }
+            }else{
+                $data = array(
+                    'status' => 'error',
+                    'code' => 400,
+                    'msg' => 'Usuario o animal no encontrado'
+                );
+            }
+        }else{
+            $data = array(
+                'status' => 'error',
+                'code' => 400,
+                'msg' => 'error con la autenticacion'
+            );
+        }
+
+        return $helpers->json($data);
     }
 }

@@ -47,3 +47,8 @@ user_getFavoritos:
     path: /getFavoritos/{email}
     defaults: { _controller: "AppBundle:User:getFavoritos", email:null }
     methods: POST
+
+user_adoptar:
+    path: /adoptar/{animalId}/{email}
+    defaults: { _controller: "AppBundle:User:adoptar", animalId:null, email:null }
+    methods: POST

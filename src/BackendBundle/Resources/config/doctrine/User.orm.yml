@@ -57,9 +57,9 @@ BackendBundle\Entity\User:
             options:
                 unsigned: false
         imagen:
-            type: blob
+            type: string
             nullable: true
-            length: null
+            length: 500
             options:
                 fixed: false
                 default: 'NULL'
