@@ -707,7 +707,12 @@ class UserController extends Controller{
                 $animales = $user->getAnimal();
                 //Si tiene animales en favoritos
                 if(count($animales) > 0){
+
                     foreach ($animales as $animal) {
+                        //Obtenemos las imagenes del animal
+                        $imagenes = $em->getRepository('BackendBundle:Imagenes')->findBy(array(
+                            'animal' => $animal->getId()
+                        ));
                         $datos[] = array(
                             'id' => $animal->getId(),
                             'nombre' => $animal->getNombre(),
@@ -719,6 +724,7 @@ class UserController extends Controller{
                             'localidad' => $animal->getLocalidad(),
                             'userId' => $animal->getUserId(),
                             'descripcion' => $animal->getDescripcion(),
+                            'imagenes' => $imagenes
                         );
 
                         //Recogemos los datos de la pagina que nos vienen por GET
