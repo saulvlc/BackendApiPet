@@ -16,9 +16,9 @@ BackendBundle\Entity\Imagenes:
                 strategy: IDENTITY
     fields:
         imagen:
-            type: blob
+            type: string
             nullable: false
-            length: null
+            length: 500
             options:
                 fixed: false
     manyToOne:

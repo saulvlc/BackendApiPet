@@ -1,5 +1,5 @@
 animal_new:
-    path: /new
+    path: /new/{imagenes}
     defaults: { _controller: "AppBundle:Animal:new" }
     methods: POST
 
